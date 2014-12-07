@@ -74,6 +74,9 @@ public class MainActivity extends ActionBarActivity {
 					key.setVisibility(View.VISIBLE);
 					key.setHint("‚ведите текстовый ключ");
 					break;
+				case 2:
+					key.setVisibility(View.INVISIBLE);
+					break;
 				}
 			}
 
@@ -117,6 +120,10 @@ public class MainActivity extends ActionBarActivity {
 			break;
 			case 1:
 				c.setKey(key.getText().toString());
+				output.setText(c.crypt(chooser.getSelectedItemPosition()));
+				switchUI();
+				break;
+			case 2:
 				output.setText(c.crypt(chooser.getSelectedItemPosition()));
 				switchUI();
 				break;

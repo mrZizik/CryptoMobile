@@ -1,6 +1,8 @@
 package ru.zizik.cryptomobile;
 
-import android.util.Log;
+import java.io.UnsupportedEncodingException;
+
+import android.util.Base64;
 
 public class Crypto {
 
@@ -91,7 +93,6 @@ public class Crypto {
 				while (a>cAlpha.length-1) 
 					a=a-cAlpha.length;
 				table[i][j] = cAlpha[a];
-				Log.e("Vijner",table[i][j] + " | ");
 			}
 		}
 		String crypted = "";
@@ -108,12 +109,27 @@ public class Crypto {
 		return crypted;
 		}
 	
+	public String base64Crypt() {
+		byte[] data = null;
+		try {
+		    data = originalMessage.toLowerCase().getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+		    e1.printStackTrace();
+		}
+		String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+
+		// Receiving side
+		return base64;
+	}
 	public String crypt(int crypt) {
 		switch (crypt) {
 			case 0:
 				return cesarCrypt();
 			case 1:
 				return vijnerCrypt();
+			case 2:
+				return base64Crypt();
+			
 		}
 		return "Error!";
 	}
