@@ -112,6 +112,8 @@ public class Crypto {
 		switch (crypt) {
 			case 0:
 				return cesarCrypt();
+			case 1:
+				return vijnerCrypt();
 		}
 		return "Error!";
 	}

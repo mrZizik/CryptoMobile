@@ -70,6 +70,10 @@ public class MainActivity extends ActionBarActivity {
 					key.setVisibility(View.VISIBLE);
 					key.setHint("‚ведите числовой ключ");
 					break;
+				case 1:
+					key.setVisibility(View.VISIBLE);
+					key.setHint("‚ведите текстовый ключ");
+					break;
 				}
 			}
 
@@ -97,20 +101,31 @@ public class MainActivity extends ActionBarActivity {
 
 		// input.setVisibility(input.getVisibility()==View.VISIBLE?View.INVISIBLE:View.VISIBLE);
 	}
-	
-		
+
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.button1:
 			if (input.getText().toString().length() > 0) {
 				c.setOriginalMessage(input.getText().toString().toLowerCase());
+				
+			
+			switch (chooser.getSelectedItemPosition()) {
+			case 0:
 				c.setKey(Integer.parseInt(key.getText().toString()));
 				output.setText(c.crypt(chooser.getSelectedItemPosition()));
+				switchUI();
+			break;
+			case 1:
+				c.setKey(key.getText().toString());
+				output.setText(c.crypt(chooser.getSelectedItemPosition()));
+				switchUI();
+				break;
+			}
 			} else {
 				output.setText("‚ведите сообщение длЯ шифрованиЯ!");
 			}
-			switchUI();
 			break;
+				
 		case R.id.button2:
 			// „ешифровка
 			break;
@@ -123,5 +138,4 @@ public class MainActivity extends ActionBarActivity {
 
 		}
 	}
-
 }
