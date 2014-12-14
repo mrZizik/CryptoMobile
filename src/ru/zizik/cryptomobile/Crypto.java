@@ -1,7 +1,18 @@
 package ru.zizik.cryptomobile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyFactory;
+import java.security.spec.X509EncodedKeySpec;
 
+import javax.crypto.Cipher;
+
+import junit.framework.Assert;
+
+import org.apache.commons.io.IOUtils;
+
+import ru.zizik.cryptomobile.rsa.RSAKeyPair;
 import android.util.Base64;
 
 public class Crypto {
@@ -73,7 +84,7 @@ public class Crypto {
 		}
 		return crypted;
 	}
-	
+
 	public String vijnerCrypt() {
 		if (sKey.length()>this.originalMessage.length()) {
 			sKey = sKey.substring(0, this.originalMessage.length());
@@ -107,29 +118,63 @@ public class Crypto {
 			crypted += table[b][a];
 		}
 		return crypted;
-		}
-	
+	}
+
 	public String base64Crypt() {
 		byte[] data = null;
 		try {
-		    data = originalMessage.toLowerCase().getBytes("UTF-8");
+			data = originalMessage.toLowerCase().getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-		    e1.printStackTrace();
+			e1.printStackTrace();
 		}
 		String base64 = Base64.encodeToString(data, Base64.DEFAULT);
 
 		// Receiving side
 		return base64;
 	}
+
+	private final String privateKeyPathName = android.os.Environment.getExternalStorageDirectory()
+			+ File.separator + "Android" + File.separator
+			+ "data" + File.separator
+			+ "private.key";
+	private final String publicKeyPathName = android.os.Environment.getExternalStorageDirectory()
+			+ File.separator + "Android" + File.separator
+			+ "data" + File.separator
+			+ "public.key";
+	private final String transformation = "RSA/ECB/PKCS1Padding";
+	private final String encoding = "UTF-8";
+
+	public String rsaEncrypt() {
+		try {
+
+			RSAKeyPair rsaKeyPair = new RSAKeyPair(2048);
+			rsaKeyPair.toFileSystem(privateKeyPathName, publicKeyPathName);
+
+			X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(IOUtils.toByteArray(new FileInputStream(publicKeyPathName)));
+
+			Cipher cipher = Cipher.getInstance(transformation);
+			cipher.init(Cipher.ENCRYPT_MODE, KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec));
+
+			return Base64.encodeToString(cipher.doFinal(originalMessage.getBytes(encoding)), Base64.DEFAULT);   
+
+		} catch(Exception exception) {
+			Assert.fail("The testEncryptDecryptWithKeyPairFiles() test failed because: " + exception.getMessage());
+		}
+		return null;
+	}
+
+
 	public String crypt(int crypt) {
 		switch (crypt) {
-			case 0:
-				return cesarCrypt();
-			case 1:
-				return vijnerCrypt();
-			case 2:
-				return base64Crypt();
-			
+		case 0:
+			return cesarCrypt();
+		case 1:
+			return vijnerCrypt();
+		case 2:
+			return base64Crypt();
+		case 3:
+			return rsaEncrypt();
+
 		}
 		return "Error!";
 	}

@@ -8,6 +8,7 @@
         <item>Цезаря</item>
         <item>Вижнера</item>
         <item>Base64</item>
+        <item>RSA</item>
     </string-array>
 
 </resources>
